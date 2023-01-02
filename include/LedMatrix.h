@@ -18,5 +18,4 @@ public:
     void updateMatrix();
 };
 
-
 #endif // LED_MATRIX_H
