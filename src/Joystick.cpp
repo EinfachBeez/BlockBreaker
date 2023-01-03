@@ -1,13 +1,15 @@
 #include <chrono>
 #include <Timer.h>
+#include <cstdio>
 #include "../include/Joystick.h"
 
 using namespace std::chrono;
 
 Joystick::Joystick(PinName xPin, PinName yPin, PinName buttonPin) : xAxis(xPin), yAxis(yPin), button(buttonPin) {
-    this->button.mode(PullDown);
+    this->button.mode(PullUp);
     this->button.rise([this] {buttonRise();});
     this->button.fall([this] {buttonFall();});
+    this->button.enable_irq();
     this->buttonDebounce.start();
 }
 
@@ -42,5 +44,6 @@ void Joystick::buttonRise() {
 void Joystick::buttonFall() {
     if (!(duration_cast<milliseconds>(buttonDebounce.elapsed_time()).count() > 10)) return;
     this->buttonValue = true;
-    this->buttonDebounce.reset();
+    
 }
+
