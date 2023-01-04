@@ -7,8 +7,8 @@ using namespace std::chrono;
 
 Joystick::Joystick(PinName xPin, PinName yPin, PinName buttonPin) : xAxis(xPin), yAxis(yPin), button(buttonPin) {
     this->button.mode(PullUp);
-    this->button.rise([this] {buttonRise();});
-    this->button.fall([this] {buttonFall();});
+    this->button.rise(callback(this, &Joystick::buttonRise));
+    this->button.fall(callback(this, &Joystick::buttonFall));
     this->button.enable_irq();
     this->buttonDebounce.start();
 }
