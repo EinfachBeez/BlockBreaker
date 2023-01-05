@@ -16,6 +16,7 @@ public:
     LedMatrix(bool runAsync = true);
     bool* operator[] (size_t row);
     void updateMatrix();
+    void clear();
 };
 
 #endif // LED_MATRIX_H

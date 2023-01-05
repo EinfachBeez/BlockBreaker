@@ -26,3 +26,11 @@ void LedMatrix::updateMatrix() {
         this->rows.write(1 << (8 + row));
     }
 }
+
+void LedMatrix::clear() {
+    for(uint8_t y = 0; y < 8; y++) {
+        for(uint8_t x = 0; x < 8; x++) {
+            this->state[x][y] = false;
+        }
+    }
+}
