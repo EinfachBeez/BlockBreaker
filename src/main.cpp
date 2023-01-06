@@ -1,7 +1,8 @@
-#include "mbed.h"
+#include <mbed.h>
 #include <chrono>
 #include <cstdint>
 #include <cstdio>
+#include <ctime>
 
 #include "../include/LedMatrix.h"
 #include "../include/Joystick.h"
@@ -45,36 +46,59 @@ void generateBlocks() {
 }
 
 /**
-*  @returns if the ball is going to collide with anything in x direction
+*   calculates collisions including changing direction of the ball and removing blocks
+*   that have been broken
 */
-bool checkXCollision() {
+void handleCollisions() {
     int newXPos = ballXPosition + ballXDirec;
-    if(newXPos < BLOCK_AREA_X && ledMatrix[ballYPosition][newXPos]) return true;
-    return ballXPosition == 0 || ballXPosition == 7;
-}
-
-/**
-*  @returns if the ball is going to collide with anything in y direction
-*/
-bool checkYCollision() {
     int newYPos = ballYPosition + ballYDirec;
-    if(newYPos < BLOCK_AREA_Y && ledMatrix[newYPos][ballXPosition]) {
-        ledMatrix[newYPos][ballXPosition] = 0;
-        return true;
+
+    if(newYPos < BLOCK_AREA_Y && newXPos < BLOCK_AREA_X) { // new ball location is inside block area
+
+        if(ledMatrix[newYPos][ballXPosition]) { // ball is going to collide with block above
+            ledMatrix[newYPos][ballXPosition] = 0;
+            ballYDirec = -ballYDirec;
+
+        } else if(ledMatrix[ballYPosition][newXPos]) { // ball is going to collide with block beside
+            ledMatrix[ballYPosition][newXPos] = 0;
+            ballXDirec = -ballXDirec;
+
+        } else if(ledMatrix[newYPos][newXPos]) { // ball is going to collide with block in front
+            ledMatrix[newYPos][newXPos] = 0;
+            ballXDirec = -ballXDirec;
+            ballYDirec = -ballYDirec;
+        }
     }
-    return ballYPosition == 0 || ballYPosition == 7;
+
+
+    if(ballXPosition == 0)
+        ballXDirec = 1;
+    else if(ballXPosition == 7)
+        ballXDirec = -1;
+
+
+    if(ballYPosition == 0)
+        ballYDirec = 1;
+    else if(ballYPosition == 7)
+        ballYDirec = -1;
 }
 
 void moveBall() {
     // Clear old position
     ledMatrix[ballYPosition][ballXPosition] = 0;
 
-    //printf("X: %i :: Y: %i\n", ballXPosition, ballYPosition);
+    // transform ball posionsion by adding its 'velocity'
     ballXPosition += ballXDirec;
     ballYPosition += ballYDirec;
 
-    if (checkXCollision()) ballXDirec = -ballXDirec;
-    if (checkYCollision()) ballYDirec = -ballYDirec;
+    
+    assert(ballXPosition < 8);
+    assert(ballXPosition >= 0);
+    assert(ballYPosition < 8);
+    assert(ballYPosition >= 0);
+    
+
+    handleCollisions();
 
     // Write new position
     ledMatrix[ballYPosition][ballXPosition] = 1;
