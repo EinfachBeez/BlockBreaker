@@ -8,9 +8,12 @@
 
 #define sleep ThisThread::sleep_for
 
-LedMatrix ledMatrix(false);
+
+#define BLOCK_AREA_X 8
+#define BLOCK_AREA_Y 3
+
+LedMatrix ledMatrix;
 Joystick joystick(PC_0, PC_1, PC_2);
-Timer gameTimer;
 
 // x > 0 rechts, x < 0 links, y > 0 unten, y < 0 oben
 int ballXDirec = 1, ballYDirec = 1;
@@ -41,21 +44,44 @@ void clearMatrix() {
 void generateBlocks() {
     clearMatrix();
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 8; j++) {
+    for (int i = 0; i < BLOCK_AREA_Y; i++) {
+        for (int j = 0; j < BLOCK_AREA_X; j++) {
             ledMatrix[i][j] = 1;
         }
     }
 }
 
+/**
+*  @returns if the ball is going to collide with anything in x direction
+*/
+bool checkXCollision() {
+    int newXPos = ballXPosition + ballXDirec;
+    if(newXPos < BLOCK_AREA_X && ledMatrix[ballYPosition][newXPos]) return true;
+    return ballXPosition == 0 || ballXPosition == 7;
+}
+
+/**
+*  @returns if the ball is going to collide with anything in y direction
+*/
+bool checkYCollision() {
+    int newYPos = ballYPosition + ballYDirec;
+    if(newYPos < BLOCK_AREA_Y && ledMatrix[newYPos][ballXPosition]) {
+        ledMatrix[newYPos][ballXPosition] = 0;
+        return true;
+    }
+    return ballYPosition == 0 || ballYPosition == 7;
+}
+
 void moveBall() {
     // Clear old position
-    //ledMatrix[ballYPosition][ballXPosition] = 0;
+    ledMatrix[ballYPosition][ballXPosition] = 0;
 
-    printf("X: %i :: Y: %i\n", ballXPosition, ballYPosition);
+    //printf("X: %i :: Y: %i\n", ballXPosition, ballYPosition);
+    ballXPosition += ballXDirec;
+    ballYPosition += ballYDirec;
 
-    if (ballXPosition == 0 || ballXPosition == 7) ballXDirec = -ballXDirec;
-    if (ballYPosition == 0 || ballYPosition == 7) ballYDirec = -ballYDirec;
+    if (checkXCollision()) ballXDirec = -ballXDirec;
+    if (checkYCollision()) ballYDirec = -ballYDirec;
 
     // Write new position
     ledMatrix[ballYPosition][ballXPosition] = 1;
@@ -76,19 +102,10 @@ int main() {
         generateBlocks();
 
         unsigned long millis;
-        gameTimer.start();
         do {
             gameState = true;
-
-            unsigned long currentMillis = chrono::duration_cast<chrono::milliseconds>(gameTimer.elapsed_time()).count();
-            if (!(currentMillis - millis > 300)) {
-                ledMatrix.updateMatrix();
-                continue;
-            }
-            millis = currentMillis;
+            sleep(300ms);
             moveBall();
-
-            ledMatrix.updateMatrix();
         } while (gameState);
     }
 }
