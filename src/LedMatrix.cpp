@@ -1,6 +1,7 @@
 #include "../include/LedMatrix.h"
 
 LedMatrix::LedMatrix(bool runAsync) {
+    // start update thread if runAsync was set to true
     if(runAsync)
             this->thread.start(callback(this, &LedMatrix::runUpdateThread));
 }
