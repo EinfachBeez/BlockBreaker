@@ -33,16 +33,9 @@ void startScreen() {
     }
 }
 
-void clearMatrix() {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            ledMatrix[i][j] = 0;
-        }
-    }
-}
 
 void generateBlocks() {
-    clearMatrix();
+    ledMatrix.clear();
 
     for (int i = 0; i < BLOCK_AREA_Y; i++) {
         for (int j = 0; j < BLOCK_AREA_X; j++) {
