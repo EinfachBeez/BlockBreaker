@@ -2,6 +2,8 @@
 #include <chrono>
 #include <cstdint>
 
+using namespace std::chrono;
+
 BlockBreaker::BlockBreaker(LedMatrix& matrix, Joystick& joystick): matrix(matrix), joystick(joystick) {
 }
 
@@ -102,7 +104,7 @@ void BlockBreaker::runGameLoop() {
             moveBar();
             ThisThread::sleep_for(50ms);
 
-            currentTick = chrono::duration_cast<chrono::milliseconds>(timer.elapsed_time()).count();
+            currentTick = duration_cast<milliseconds>(timer.elapsed_time()).count();
             if (currentTick - tick > 300) {
                 tick = currentTick;
                 moveBall();
