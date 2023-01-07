@@ -3,6 +3,9 @@
 #include <mbed.h>
 #include <vector>
 
+#define MATRIX_HEIGHT 8
+#define MATRIX_WIDTH 8
+
 struct Pixel {
     uint8_t x;
     uint8_t y;

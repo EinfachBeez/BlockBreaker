@@ -1,9 +1,13 @@
 #include "../include/BlockBreaker.h"
+#include <chrono>
+#include <cstdint>
 
 BlockBreaker::BlockBreaker(LedMatrix& matrix, Joystick& joystick): matrix(matrix), joystick(joystick) {
 }
 
-
+/**
+*  Generates the 8x3 block which must be destroyed by the player
+*/
 void BlockBreaker::generateBlocks() {
     matrix.clear();
 
@@ -13,7 +17,6 @@ void BlockBreaker::generateBlocks() {
         }
     }
 }
-
 
 void BlockBreaker::handleCollisions() {
     int newXPos = ballXPos + ballXDirec;
@@ -35,7 +38,6 @@ void BlockBreaker::handleCollisions() {
             ballYDirec = -ballYDirec;
         }
     }
-
 
     if(ballXPos == 0)
         ballXDirec = 1;
@@ -63,12 +65,28 @@ void BlockBreaker::moveBall() {
     assert(ballYPos < 8);
     assert(ballYPos >= 0);
     
-
     handleCollisions();
-
 
     // Write new position
     matrix[ballYPos][ballXPos] = 1;
+}
+
+void BlockBreaker::moveBar() {
+    // Clear old position
+    for (int i = 0; i < BAR_WIDTH; i++) {
+        matrix[MATRIX_HEIGHT - 1][int(barPos) + i] = 0;
+    }
+
+    barPos += joystick.getXValue();
+
+    if (barPos >= MAX_BAR_POS) 
+        barPos = MAX_BAR_POS;
+    else if (barPos < 0) 
+        barPos = 0;
+    
+    for (int i = 0; i < BAR_WIDTH; i++) {
+        matrix[MATRIX_HEIGHT - 1][int(barPos) + i] = 1;
+    }
 }
 
 
@@ -77,9 +95,18 @@ void BlockBreaker::runGameLoop() {
 
         generateBlocks();
 
+        uint32_t tick = 0;
+        uint32_t currentTick;
+        timer.start();
         while(true) {
-            ThisThread::sleep_for(300ms);
-            moveBall();
+            moveBar();
+            ThisThread::sleep_for(50ms);
+
+            currentTick = chrono::duration_cast<chrono::milliseconds>(timer.elapsed_time()).count();
+            if (currentTick - tick > 300) {
+                tick = currentTick;
+                moveBall();
+            }
         };
     }
 }
