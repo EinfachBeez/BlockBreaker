@@ -22,17 +22,9 @@ int ballXDirec = 1, ballYDirec = 1;
 int ballXPosition = 3, ballYPosition = 6;
 
 
-uint8_t startScreenMatrix[][2] = {
-    {1, 1}, {1, 2}, {2, 1}, {2, 2}, {1, 5}, {1, 6}, {2, 5}, {2, 6}, {4, 0}, {5, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 6}, {4, 7}
+const std::vector<Pixel> startImage = {
+    {1, 1}, {2, 1}, {1, 2}, {2, 2}, {5, 1}, {6, 1}, {5, 2}, {6, 2}, {0, 4}, {1, 5}, {2, 6}, {3, 6}, {4, 6}, {5, 6}, {6, 5}, {7, 4}
 };
-
-void startScreen() {
-    for (int i = 0; i < sizeof(startScreenMatrix)/sizeof(startScreenMatrix[0]); i++) {
-        uint8_t x = startScreenMatrix[i][0];
-        uint8_t y = startScreenMatrix[i][1];
-        ledMatrix[x][y] = 1;
-    }
-}
 
 
 void generateBlocks() {
@@ -110,7 +102,7 @@ int main() {
 
     bool gameState;
 
-    startScreen();
+    ledMatrix.displayImage(startImage);
 
     sleep(2s);
 

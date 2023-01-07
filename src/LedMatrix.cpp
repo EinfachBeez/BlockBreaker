@@ -16,6 +16,13 @@ bool* LedMatrix::operator[](size_t row) {
     return this->state[row];
 }
 
+void LedMatrix::displayImage(const std::vector<Pixel> &pixels) {
+    this->clear();
+    for(const auto&[x, y] : pixels) {
+        this->state[y][x] = true;
+    }
+}
+
 void LedMatrix::updateMatrix() {
     for(uint8_t row = 0; row < 8; row++) {
         uint8_t rowData = 0;

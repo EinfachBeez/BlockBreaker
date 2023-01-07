@@ -1,6 +1,12 @@
 #ifndef LED_MATRIX_H
 #define LED_MATRIX_H
 #include <mbed.h>
+#include <vector>
+
+struct Pixel {
+    uint8_t x;
+    uint8_t y;
+};
 
 class LedMatrix {
 private:
@@ -26,6 +32,12 @@ public:
     * @returns a pointer to an array of the specified row
     */
     bool* operator[] (size_t row);
+
+    /**
+    * displays an image of pixel values
+    * @param pixels the collection of pixel values to enable
+    */
+    void displayImage(const std::vector<Pixel>& pixels);
 
     /**
     * Call this method in repeat to update the outputs to the matrix.
