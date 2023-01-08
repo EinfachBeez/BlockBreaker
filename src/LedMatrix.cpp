@@ -18,20 +18,20 @@ bool* LedMatrix::operator[](size_t row) {
 
 void LedMatrix::displayImage(const std::vector<Pixel> &pixels) {
     this->clear();
-    for(const auto&[x, y] : pixels) {
-        this->state[y][x] = true;
+    for(const Pixel& pixel : pixels) {
+        this->state[pixel.y][pixel.x] = true;
     }
 }
 
 void LedMatrix::updateMatrix() {
-    for(uint8_t row = 0; row < 8; row++) {
-        uint8_t rowData = 0;
-        for(uint8_t column = 0; column < 8; column++) {
-            rowData |= (this->state[row][column] << (7 - column));
+    for(uint8_t row = 0; row < 8; row++) {                          // iterate over each row
+        uint8_t rowData = 0;                                        
+        for(uint8_t column = 0; column < 8; column++) {             // iterate over each pixel in current row
+            rowData |= (this->state[row][column] << (7 - column));  // get current pixel and shift data to corresponding bit in byte
         }
-        this->rows.write(0);
-        this->columns.write(~rowData);
-        this->rows.write(1 << (8 + row));
+        this->rows.write(0);                                        // disable all row outputs to prevent unwanted behavior
+        this->columns.write(~rowData);                              // write inverted pixel data for row -> pull enabled pixels low
+        this->rows.write(1 << (8 + row));                           // pull current row high, while keeping every othe low
     }
 }
 
