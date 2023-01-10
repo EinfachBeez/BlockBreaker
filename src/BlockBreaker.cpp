@@ -4,7 +4,7 @@
 
 using namespace std::chrono;
 
-BlockBreaker::BlockBreaker(LedMatrix& matrix, Joystick& joystick): matrix(matrix), joystick(joystick) {
+BlockBreaker::BlockBreaker(LedMatrix& matrix, Joystick& joystick, Buzzer& buzzer): matrix(matrix), joystick(joystick), buzzer(int &) {
 }
 
 /**
@@ -43,6 +43,7 @@ void BlockBreaker::handleCollisions() {
 
     if(ballXPos == 0)
         ballXDirec = 1;
+        
     else if(ballXPos == 7)
         ballXDirec = -1;
 
@@ -103,6 +104,7 @@ void BlockBreaker::runGameLoop() {
         while(true) {
             moveBar();
             ThisThread::sleep_for(50ms);
+
 
             currentTick = duration_cast<milliseconds>(timer.elapsed_time()).count();
             if (currentTick - tick > 300) {

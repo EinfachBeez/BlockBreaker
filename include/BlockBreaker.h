@@ -3,6 +3,7 @@
 
 #include "../include/LedMatrix.h"
 #include "../include/Joystick.h"
+#include "../include/Buzzer.h"
 #include <cstdint>
 
 
@@ -12,11 +13,11 @@
 #define BAR_WIDTH 2
 #define MAX_BAR_POS (8 - BAR_WIDTH)
 
-
 class BlockBreaker {
 private:
     LedMatrix& matrix;
     Joystick& joystick;
+    Buzzer& buzzer;
     Timer timer;
 
     int8_t ballXDirec = 1;
@@ -37,7 +38,7 @@ private:
     void moveBar();
 
 public:
-    BlockBreaker(LedMatrix& matrix, Joystick& joystick);
+    BlockBreaker(LedMatrix& matrix, Joystick& joystick, Buzzer& buzzer);
     void runGameLoop();
 };
 
