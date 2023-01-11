@@ -4,16 +4,16 @@
 Buzzer::Buzzer(PinName buzzerPin) : pwmBuzzer(buzzerPin) {
 }
 
-void Buzzer::play(float frequency, uint16_t time) {
+void Buzzer::play(float frequency, std::chrono::duration<long long> time) {
     pwmBuzzer.period(frequency);
     pwmBuzzer.write(0.5);
     timeout.attach(callback(this, &Buzzer::stop), time);
 }
 
 void Buzzer::playCollision() {
-    pwmBuzzer.period(1/1000);
+    pwmBuzzer.period(1.0/1000);
     pwmBuzzer.write(0.5);
-    timeout.attach(callback(this, &Buzzer::stop), 1);
+    timeout.attach(callback(this, &Buzzer::stop), 1s);
 }
 
 void Buzzer::resume() {

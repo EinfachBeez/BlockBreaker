@@ -4,7 +4,7 @@
 
 using namespace std::chrono;
 
-BlockBreaker::BlockBreaker(LedMatrix& matrix, Joystick& joystick, Buzzer& buzzer): matrix(matrix), joystick(joystick), buzzer(int &) {
+BlockBreaker::BlockBreaker(LedMatrix& matrix, Joystick& joystick, Buzzer& buzzer): matrix(matrix), joystick(joystick), buzzer(buzzer) {
 }
 
 /**

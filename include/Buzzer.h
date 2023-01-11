@@ -1,5 +1,5 @@
-#ifndef JOYSTICK_H
-#define JOYSTICK_H
+#ifndef BUZZER_H
+#define BUZZER_H
 #include <cstdint>
 #include <mbed.h>
 
@@ -60,11 +60,11 @@ private:
 public:
     Buzzer(PinName buzzerPin);
 
-    void play(float frequency, uint16_t time);
+    void play(float frequency, std::chrono::duration<long long> time);
     void resume();
     void stop();
     void playCollision();
 
 };
 
-#endif //JOYSTICK_H
+#endif //BUZZER_H
