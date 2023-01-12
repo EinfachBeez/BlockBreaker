@@ -20,13 +20,17 @@ private:
     Buzzer& buzzer;
     Timer timer;
 
-    int8_t ballXDirec = 1;
-    int8_t ballYDirec = 1;
+    int8_t ballXDirec;
+    int8_t ballYDirec;
 
-    uint8_t ballXPos = 3;
-    uint8_t ballYPos = 6;
+    uint8_t ballXPos;
+    uint8_t ballYPos;
 
     float barPos = MAX_BAR_POS / 2.0;
+    
+    bool alive = true;
+    bool won = false;
+    bool gameActive = false;
 
     void generateBlocks();
     /**
@@ -34,8 +38,10 @@ private:
     *   that have been broken
     */
     void handleCollisions();
+    bool hasWon();
     void moveBall();
     void moveBar();
+    void gameInit();
 
 public:
     BlockBreaker(LedMatrix& matrix, Joystick& joystick, Buzzer& buzzer);

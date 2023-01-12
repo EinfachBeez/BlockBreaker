@@ -41,6 +41,7 @@ void BlockBreaker::handleCollisions() {
         }
     }
 
+    // handle border bounce
     if(ballXPos == 0)
         ballXDirec = 1;
         
@@ -48,10 +49,40 @@ void BlockBreaker::handleCollisions() {
         ballXDirec = -1;
 
 
-    if(ballYPos == 0)
+    // top bounce
+    if(ballYPos == 0) {
         ballYDirec = 1;
-    else if(ballYPos == 7)
-        ballYDirec = -1;
+        return;
+    }
+
+    if(newYPos == 7) { // ball is going to enter bottom area
+        uint8_t barStart = (uint8_t) barPos;
+        uint8_t barEnd = uint8_t(barPos) + BAR_WIDTH - 1;
+
+        if(newXPos == barStart && ballXDirec == 1 || newXPos == barEnd  && ballXDirec == -1) { // ball is going to hit player bar edge
+            ballYDirec = -1;
+            ballXDirec = -ballXDirec;
+            return;
+        }
+        if(newXPos >= barStart - 1 && newXPos <= barEnd + 1) { // ball is going to hit player bar center
+
+            ballYDirec = -1;
+            return;
+        }
+        alive = false;
+    }
+}
+
+bool BlockBreaker::hasWon() {
+    for(uint8_t y = 0; y < BLOCK_AREA_Y; y++) {                 // iterate over rows in block area
+        for(uint8_t x = 0; x < BLOCK_AREA_X; x++) {             // iterate over columns in current row
+            if(matrix[y][x]) {                                  // check if current cell has been cleared
+                if(ballXPos == x && ballYPos == y) continue;    // if cell has not been cleard it may be the ball
+                return false;                                   // if it's not the ball return false
+            }
+        }
+    }
+    return true;                                                // return true if no uncleared point was found
 }
 
 void BlockBreaker::moveBall() {
@@ -69,6 +100,8 @@ void BlockBreaker::moveBall() {
     assert(ballYPos >= 0);
     
     handleCollisions();
+    won = hasWon();
+    if(!alive || won) return;
 
     // Write new position
     matrix[ballYPos][ballXPos] = 1;
@@ -93,10 +126,49 @@ void BlockBreaker::moveBar() {
 }
 
 
+void BlockBreaker::gameInit() {
+    gameActive = true;
+    won = false;
+    alive = true;
+    ballXDirec = -1;
+    ballYDirec = -1;
+    ballXPos = 3;
+    ballYPos = 6;
+    matrix.clear();
+    generateBlocks();
+}
+
+
 void BlockBreaker::runGameLoop() {
     while (true) {
+        while(!joystick.getButtonValue()) ThisThread::sleep_for(10ms);
 
-        generateBlocks();
+        gameInit();
+
+        uint32_t tick = 0;
+        uint32_t currentTick;
+        timer.start();
+
+        while(gameActive) {
+            moveBar();
+            ThisThread::sleep_for(50ms);
+
+            currentTick = duration_cast<milliseconds>(timer.elapsed_time()).count();
+            if(currentTick - tick > 300) {
+                tick = currentTick;
+                moveBall();
+                gameActive = alive && !won;
+            }
+        }
+        if(won)
+            matrix.displayImage(MI_SMILEY_HAPPY);
+        else
+            matrix.displayImage(MI_SMILEY_SAD);
+    }
+}
+
+/*
+generateBlocks();
 
         uint32_t tick = 0;
         uint32_t currentTick;
@@ -110,7 +182,13 @@ void BlockBreaker::runGameLoop() {
             if (currentTick - tick > 300) {
                 tick = currentTick;
                 moveBall();
+                if(!alive || won) break;
             }
-        };
-    }
-}
+        }
+        if(won)
+            matrix.displayImage(MI_SMILEY_HAPPY);
+        else
+            matrix.displayImage({{2,2},{2,3},{2,4},{2,5},{3,2},{3,5},{4,2},{4,5},{5,2},{5,3},{5,4},{5,5}});
+        printf("ENDE\n");
+        break;
+*/
