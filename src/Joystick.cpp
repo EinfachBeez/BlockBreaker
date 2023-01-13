@@ -17,7 +17,7 @@ float Joystick::getXValue() {
     this->xValue = xAxis.read();
 
     this->xValue = xValue * 2 - 1;
-    this->xValue = xValue > -0.9 && xValue < 0.1 ? 0 : xValue;
+    this->xValue = xValue > -0.1 && xValue < 0.1 ? 0 : xValue;
 
     return this->xValue;
 }
@@ -26,7 +26,7 @@ float Joystick::getYValue() {
     this->yValue = yAxis.read();
 
     this->yValue = yValue * 2 - 1;
-    this->yValue = yValue > -0.9 && yValue < 0.1 ? 0 : yValue;
+    this->yValue = yValue > -0.1 && yValue < 0.1 ? 0 : yValue;
 
     return this->yValue;
 }
