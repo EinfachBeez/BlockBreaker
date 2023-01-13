@@ -115,19 +115,24 @@ void BlockBreaker::moveBar() {
         matrix[MATRIX_HEIGHT - 1][int(barPos) + i] = 0;
     }
 
+    // offset positon by current input
     barPos += joystick.getXValue() * 0.5;
 
+
+    // limit
     if (barPos >= MAX_BAR_POS) 
         barPos = MAX_BAR_POS;
     else if (barPos < 0) 
         barPos = 0;
     
+    // write new position
     for (int i = 0; i < BAR_WIDTH; i++) {
         matrix[MATRIX_HEIGHT - 1][int(barPos) + i] = 1;
     }
 }
 
 
+/// prepares everything for a new game
 void BlockBreaker::gameInit() {
     gameActive = true;
     won = false;
@@ -144,15 +149,15 @@ void BlockBreaker::gameInit() {
 
 void BlockBreaker::runGameLoop() {
     while (true) {
-        while(!joystick.getButtonValue()) ThisThread::sleep_for(10ms);
+        while(!joystick.getButtonValue()) ThisThread::sleep_for(1ms);  // wait for joystrick press
 
-        gameInit();
+        gameInit();                         // reset everything to default
 
         uint32_t tick = 0;
         uint32_t currentTick;
         timer.start();
 
-        while(gameActive) {
+        while(gameActive) {                 // run the game loop as long as the game hasn't ended
             moveBar();
             ThisThread::sleep_for(50ms);
 
@@ -160,7 +165,7 @@ void BlockBreaker::runGameLoop() {
             if(currentTick - tick > 300) {
                 tick = currentTick;
                 moveBall();
-                gameActive = alive && !won;
+                gameActive = alive && !won; // upadte the game status to check if the game should be continued
             }
         }
         if(won) {
