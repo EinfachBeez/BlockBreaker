@@ -115,7 +115,7 @@ void BlockBreaker::moveBar() {
         matrix[MATRIX_HEIGHT - 1][int(barPos) + i] = 0;
     }
 
-    barPos += joystick.getXValue();
+    barPos += joystick.getXValue() * 0.5;
 
     if (barPos >= MAX_BAR_POS) 
         barPos = MAX_BAR_POS;
@@ -176,29 +176,3 @@ void BlockBreaker::runGameLoop() {
 
     }
 }
-
-/*
-generateBlocks();
-
-        uint32_t tick = 0;
-        uint32_t currentTick;
-        timer.start();
-        while(true) {
-            moveBar();
-            ThisThread::sleep_for(50ms);
-
-
-            currentTick = duration_cast<milliseconds>(timer.elapsed_time()).count();
-            if (currentTick - tick > 300) {
-                tick = currentTick;
-                moveBall();
-                if(!alive || won) break;
-            }
-        }
-        if(won)
-            matrix.displayImage(MI_SMILEY_HAPPY);
-        else
-            matrix.displayImage({{2,2},{2,3},{2,4},{2,5},{3,2},{3,5},{4,2},{4,5},{5,2},{5,3},{5,4},{5,5}});
-        printf("ENDE\n");
-        break;
-*/
