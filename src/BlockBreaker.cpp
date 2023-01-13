@@ -42,13 +42,14 @@ void BlockBreaker::handleCollisions() {
     }
 
     // handle border bounce
-    if(ballXPos == 0)
+    if(ballXPos == 0) {
         ballXDirec = 1;
+    }
         
-    else if(ballXPos == 7)
+    else if(ballXPos == 7) {
         ballXDirec = -1;
-
-
+    }
+        
     // top bounce
     if(ballYPos == 0) {
         ballYDirec = 1;
@@ -62,11 +63,12 @@ void BlockBreaker::handleCollisions() {
         if(newXPos == barStart && ballXDirec == 1 || newXPos == barEnd  && ballXDirec == -1) { // ball is going to hit player bar edge
             ballYDirec = -1;
             ballXDirec = -ballXDirec;
+            buzzer.playCollision();
             return;
         }
         if(newXPos >= barStart - 1 && newXPos <= barEnd + 1) { // ball is going to hit player bar center
-
             ballYDirec = -1;
+            buzzer.playCollision();
             return;
         }
         alive = false;
@@ -138,6 +140,7 @@ void BlockBreaker::gameInit() {
     generateBlocks();
 }
 
+    
 
 void BlockBreaker::runGameLoop() {
     while (true) {
@@ -160,10 +163,17 @@ void BlockBreaker::runGameLoop() {
                 gameActive = alive && !won;
             }
         }
-        if(won)
+        if(won) {
             matrix.displayImage(MI_SMILEY_HAPPY);
-        else
+            buzzer.play(1.0/1500, 1s);
+            buzzer.play(1.0/2000, 1s);
+        } else {
             matrix.displayImage(MI_SMILEY_SAD);
+            buzzer.play(1.0/500, 1s);
+            buzzer.play(1.0/200, 1s);
+        }
+            
+
     }
 }
 
